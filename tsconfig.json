@@ -1,0 +1,24 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
+    },
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "strictPropertyInitialization": false,
+        "baseUrl": "./src/",
+        "rootDir": "./src/",
+        "outDir": "./dist/",
+        "paths": {
+            "@utils": ["./lib/utils.ts"],
+            "@validation/*": ["./validation/*"],
+            "@types/*": ["./types/*"],
+            "@models/*": ["./models/*"],
+            "@services/*": ["./services/*"],
+            "@configs": ["./configs"]
+        }
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,7 @@
+{
+    "ignore": [".git"],
+    "verbose": true,
+    "execMap": {
+        "ts": "ts-node"
+    }
+}
