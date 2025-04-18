@@ -22,10 +22,6 @@ export default [
         },
 
         languageOptions: {
-            globals: {
-                ...globals.browser,
-            },
-
             parser: tsParser,
             ecmaVersion: 'latest',
             sourceType: 'module',
