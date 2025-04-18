@@ -1,9 +1,4 @@
-import type { EventRegistry } from './types';
-
-type ListenerFn<T> = (props: T) => void;
-type ListenersMap<Store extends EventRegistry> = {
-    [E in keyof Store]?: Array<ListenerFn<Store[E]>>;
-};
+import type { EventRegistry, ListenerFn, ListenersMap } from './types';
 
 /**
  * Type-safe event emitter using a provided event registry
