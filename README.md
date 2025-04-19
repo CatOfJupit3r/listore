@@ -1,10 +1,10 @@
-# Listore - listeners, which actually listen!
+# Lystore - listeners, which actually listen!
 
-Listore is a TypeScript-first library built for creating modular event emitters/listener pattern stores. Listore provides you with an easy way to create fully type-safe stores with a very slick
+Lystore is a TypeScript-first library built for creating modular event emitters/listener pattern stores. Lystore provides you with an easy way to create fully type-safe stores with a very slick
 
 # Usage
 
-There are 2 ways to use Listore, both provide the same results
+There are 2 ways to use Lystore, both provide the same results
 
 ## Same File Stores
 
@@ -15,7 +15,7 @@ user.store.ts
 </h6>
 
 ```typescript
-import { ListenerStore, type EventRegistry } from 'listore';
+import { type EventRegistry, ListenerStore } from 'lystore';
 
 export interface UserRegistry extends EventRegistry {
     'user:login': { userId: string, date: Date };
@@ -25,7 +25,6 @@ export interface UserRegistry extends EventRegistry {
 const store = new ListenerStore<UserRegistry>();
 
 export default store;
-
 ```
 
 Now, you can import this store wherever and your `on()` and `notify()` will all have provided type-hints with respect to your registry
@@ -43,26 +42,24 @@ store.on('user:login', ({ userId, date }) => {
 store.on('user:logout', (props) => {
     // props is unknown, as this type is not registered!
 })
-
 ```
 
 ## Multi-files of Madness
 
-But let's be honest, we like to separate our types from our store declarations, right? But don't worry, Listore got you covered! 
+But let's be honest, we like to separate our types from our store declarations, right? But don't worry, Lystore got you covered! 
 
 <h6 style="text-align: right;">
 /user-store/store.ts
 </h6>
 
 ```typescript
-import { ListenerStore, type EventRegistry } from 'listore';
+import { ListenerStore, type EventRegistry } from 'lystore';
 
 export interface UserRegistry extends EventRegistry {}
 
 const store = new ListenerStore<UserRegistry>();
 
 export default store;
-
 ```
 
 <h6 style="text-align: right;">
@@ -78,8 +75,6 @@ declare module './store' {
         'user:registration': { username: string, email: string, password: string };
     }
 }
-
-
 ```
 
 <h6 style="text-align: right;">
@@ -104,5 +99,4 @@ store.on('user:login', ({ userId, date }) => {
 store.on('user:logout', () => {
     // and this still unknown
 })
-
 ```
