@@ -1,6 +1,17 @@
-import { StrictStoreKeyCheckFailError } from './errors';
+import { failedToValidateEventMessage, StrictStoreKeyCheckFailError } from './errors';
 import { ListenerStore } from './listener-store';
 import type { EventRegistry, ListenerFn, MethodWithKeyValidationSupport, StrictStoreRules } from './types';
+
+const DEFAULT_VALIDATION_RULES: StrictStoreRules = {
+    attachment: {
+        throws: true,
+        logger: false,
+    },
+    notification: {
+        throws: true,
+        logger: false,
+    },
+};
 
 /**
  * Customizable type-safe and strict event emitter with key validation for all your needs!
@@ -18,20 +29,19 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
      */
     protected _rules: StrictStoreRules;
 
-    constructor(
-        keys: readonly T[],
-        rules: StrictStoreRules = {
-            attachment: {
-                throws: true,
-            },
-            notification: {
-                throws: true,
-            },
-        }
-    ) {
+    constructor(keys: readonly T[], rules?: StrictStoreRules) {
         super();
         this._keys = keys;
-        this._rules = rules;
+        this._rules = {
+            attachment: {
+                ...DEFAULT_VALIDATION_RULES.attachment,
+                ...(rules?.attachment ?? {}),
+            },
+            notification: {
+                ...DEFAULT_VALIDATION_RULES.notification,
+                ...(rules?.notification ?? {}),
+            },
+        };
     }
 
     public on<K extends keyof Store>(event: K, listener: K extends T ? ListenerFn<Store[K]> : never): void {
@@ -60,7 +70,11 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
     protected onKeyErrorValidationError(event: string, method: MethodWithKeyValidationSupport): boolean {
         const rules = method === 'on' ? this._rules.attachment : this._rules.notification;
         if (rules?.logger) {
-            rules?.logger(event, method);
+            if (typeof rules?.logger === 'function') {
+                rules?.logger(event, method);
+            } else {
+                console.warn(failedToValidateEventMessage(event, method));
+            }
         }
         if (rules?.throws) {
             if (typeof rules?.throws === 'function') {

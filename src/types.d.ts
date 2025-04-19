@@ -23,7 +23,7 @@ export type MethodWithKeyValidationSupport = 'on' | 'notify';
  */
 interface Rule {
     throws?: boolean | ((event: string, method: MethodWithKeyValidationSupport) => Error);
-    logger?: (event: string, method: MethodWithKeyValidationSupport) => void;
+    logger?: boolean | ((event: string, method: MethodWithKeyValidationSupport) => void);
 }
 
 export interface StrictStoreRules {
