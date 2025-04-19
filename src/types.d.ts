@@ -27,6 +27,10 @@ interface Rule {
 }
 
 export interface StrictStoreRules {
-    attachment?: Rule;
-    notification?: Rule;
+    attachment?: {
+        key?: Rule;
+    };
+    notification?: {
+        key?: Rule;
+    };
 }

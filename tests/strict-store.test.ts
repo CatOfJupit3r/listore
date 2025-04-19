@@ -18,10 +18,14 @@ describe('Strict Store', () => {
             keys,
             rules ?? {
                 attachment: {
-                    throws: false,
+                    key: {
+                        throws: false,
+                    },
                 },
                 notification: {
-                    throws: false,
+                    key: {
+                        throws: false,
+                    },
                 },
             }
         );
@@ -95,7 +99,9 @@ describe('Strict Store', () => {
     it('should throw error on notify with invalid key', async () => {
         const store = createStore({
             notification: {
-                throws: true,
+                key: {
+                    throws: true,
+                },
             },
         });
         const inputs = { userId: '123', timestamp: Date.now() };
@@ -111,10 +117,12 @@ describe('Strict Store', () => {
         const error = new Error('Custom error');
         const store = createStore({
             notification: {
-                throws: (event, method) => {
-                    expect(event).toEqual('account:login');
-                    expect(method).toEqual('notify');
-                    return error;
+                key: {
+                    throws: (event, method) => {
+                        expect(event).toEqual('account:login');
+                        expect(method).toEqual('notify');
+                        return error;
+                    },
                 },
             },
         });
@@ -130,7 +138,9 @@ describe('Strict Store', () => {
     it('should not throw error on notify with valid key', async () => {
         const store = createStore({
             notification: {
-                throws: true,
+                key: {
+                    throws: true,
+                },
             },
         });
         const inputs = { userId: '123', timestamp: Date.now() };
@@ -145,8 +155,10 @@ describe('Strict Store', () => {
         console.warn = vi.fn();
         const store = createStore({
             notification: {
-                throws: false,
-                logger: true,
+                key: {
+                    throws: false,
+                    logger: true,
+                },
             },
         });
         const listener = createListener({});
@@ -162,12 +174,14 @@ describe('Strict Store', () => {
         const logger = vi.fn();
         const store = createStore({
             notification: {
-                logger: (event, method) => {
-                    expect(event).toEqual('account:login');
-                    expect(method).toEqual('notify');
-                    logger();
+                key: {
+                    logger: (event, method) => {
+                        expect(event).toEqual('account:login');
+                        expect(method).toEqual('notify');
+                        logger();
+                    },
+                    throws: false,
                 },
-                throws: false,
             },
         });
         const listener = createListener();
@@ -182,7 +196,9 @@ describe('Strict Store', () => {
     it('should throw on attachment with invalid key', () => {
         const store = createStore({
             attachment: {
-                throws: true,
+                key: {
+                    throws: true,
+                },
             },
         });
         const listener = createListener();
@@ -197,10 +213,12 @@ describe('Strict Store', () => {
         const error = new Error('Custom error');
         const store = createStore({
             attachment: {
-                throws: (event, method) => {
-                    expect(event).toEqual('account:login');
-                    expect(method).toEqual('on');
-                    return error;
+                key: {
+                    throws: (event, method) => {
+                        expect(event).toEqual('account:login');
+                        expect(method).toEqual('on');
+                        return error;
+                    },
                 },
             },
         });
@@ -215,7 +233,9 @@ describe('Strict Store', () => {
     it('should not throw on attachment with valid key', () => {
         const store = createStore({
             attachment: {
-                throws: false,
+                key: {
+                    throws: false,
+                },
             },
         });
         const inputs = { userId: '123', timestamp: Date.now() };
@@ -228,8 +248,10 @@ describe('Strict Store', () => {
         console.warn = vi.fn();
         const store = createStore({
             attachment: {
-                throws: false,
-                logger: true,
+                key: {
+                    throws: false,
+                    logger: true,
+                },
             },
         });
         const inputs = { userId: '123', timestamp: Date.now() };
@@ -246,11 +268,13 @@ describe('Strict Store', () => {
         const logger = vi.fn();
         const store = createStore({
             attachment: {
-                throws: false,
-                logger: (event, method) => {
-                    expect(event).toEqual('account:login');
-                    expect(method).toEqual('on');
-                    logger();
+                key: {
+                    throws: false,
+                    logger: (event, method) => {
+                        expect(event).toEqual('account:login');
+                        expect(method).toEqual('on');
+                        logger();
+                    },
                 },
             },
         });
@@ -267,7 +291,9 @@ describe('Strict Store', () => {
         console.warn = vi.fn();
         const store = createStore({
             attachment: {
-                logger: false,
+                key: {
+                    logger: false,
+                },
             },
         });
         const listener = createListener();
@@ -289,12 +315,16 @@ describe('Strict Store', () => {
         console.warn = vi.fn();
         const store = createStore({
             attachment: {
-                throws: true,
-                logger: true,
+                key: {
+                    throws: true,
+                    logger: true,
+                },
             },
             notification: {
-                throws: true,
-                logger: true,
+                key: {
+                    throws: true,
+                    logger: true,
+                },
             },
         });
         const listener = createListener();

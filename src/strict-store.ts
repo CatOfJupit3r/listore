@@ -4,12 +4,16 @@ import type { EventRegistry, ListenerFn, MethodWithKeyValidationSupport, StrictS
 
 const DEFAULT_VALIDATION_RULES: StrictStoreRules = {
     attachment: {
-        throws: true,
-        logger: false,
+        key: {
+            throws: true,
+            logger: false,
+        },
     },
     notification: {
-        throws: true,
-        logger: false,
+        key: {
+            throws: true,
+            logger: false,
+        },
     },
 };
 
@@ -34,12 +38,18 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
         this._keys = keys;
         this._rules = {
             attachment: {
-                ...DEFAULT_VALIDATION_RULES.attachment,
-                ...(rules?.attachment ?? {}),
+                ...(DEFAULT_VALIDATION_RULES.attachment ?? {}),
+                key: {
+                    ...(DEFAULT_VALIDATION_RULES.attachment?.key ?? {}),
+                    ...(rules?.attachment?.key ?? {}),
+                },
             },
             notification: {
                 ...DEFAULT_VALIDATION_RULES.notification,
-                ...(rules?.notification ?? {}),
+                key: {
+                    ...(DEFAULT_VALIDATION_RULES.notification?.key ?? {}),
+                    ...(rules?.notification?.key ?? {}),
+                },
             },
         };
     }
@@ -68,7 +78,7 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
      * @protected
      */
     protected onKeyErrorValidationError(event: string, method: MethodWithKeyValidationSupport): boolean {
-        const rules = method === 'on' ? this._rules.attachment : this._rules.notification;
+        const rules = method === 'on' ? this._rules.attachment?.key : this._rules.notification?.key;
         if (rules?.logger) {
             if (typeof rules?.logger === 'function') {
                 rules?.logger(event, method);
