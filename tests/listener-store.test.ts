@@ -142,6 +142,19 @@ describe('listener store', () => {
         }
     });
 
+    it('should not throw exception when no listener/events is in store on remove fn', () => {
+        const listener = createEmptyFn();
+        const listener2 = createEmptyFn();
+
+        store.off('user:login', listener);
+
+        store.on('user:login', listener2);
+        store.off('user:login', listener);
+
+        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        expect(listener2).toHaveBeenCalledTimes(1);
+    });
+
     it('same listener should be called multiple times when listened to multiple events', () => {
         const listener = createEmptyFn();
 
