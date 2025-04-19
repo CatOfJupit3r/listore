@@ -7,7 +7,7 @@ export default defineConfig({
         environment: 'node',
         pool: 'forks',
         testTimeout: 60000,
-        setupFiles: [], // you can add your own setup files here (e.g. silence logging, set npm userconfig)
+        setupFiles: ['.bin/vitest/setup/to-throw-error-with.ts'], // you can add your own setup files here (e.g. silence logging, set npm userconfig)
         watch: false,
         coverage: {
             include: ['src/**/*.ts', 'src/**/*.js'],
