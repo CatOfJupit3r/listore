@@ -63,7 +63,7 @@ describe('listener store', () => {
         expectListenersToBe('user:logout', 1);
     });
 
-    it('should trigger events', () => {
+    it('should trigger events', async () => {
         const currentTime = Date.now();
         const loginListener = vi.fn((props: { userId: string; timestamp: number }) => {
             expect(props).toEqual({ userId: '123', timestamp: currentTime });
@@ -74,8 +74,8 @@ describe('listener store', () => {
 
         store.on('user:login', loginListener);
         store.on('user:logout', logoutListener);
-        store.notify('user:login', { userId: '123', timestamp: currentTime });
-        store.notify('user:logout', { userId: '123', reason: 'timeout' });
+        await store.notify('user:login', { userId: '123', timestamp: currentTime });
+        await store.notify('user:logout', { userId: '123', reason: 'timeout' });
 
         expect(loginListener).toHaveBeenCalledTimes(1);
         expect(loginListener).toHaveBeenCalledWith({ userId: '123', timestamp: currentTime });
@@ -84,7 +84,7 @@ describe('listener store', () => {
         expect(logoutListener).toHaveBeenCalledWith({ userId: '123', reason: 'timeout' });
     });
 
-    it('should trigger all listeners on single event', () => {
+    it('should trigger all listeners on single event', async () => {
         const listener1 = createEmptyFn();
         const listener2 = createEmptyFn();
         const listener3 = createEmptyFn();
@@ -94,7 +94,7 @@ describe('listener store', () => {
         store.on('user:login', listener3);
 
         const time = Date.now();
-        store.notify('user:login', { userId: '123', timestamp: time });
+        await store.notify('user:login', { userId: '123', timestamp: time });
 
         const expectListenerCall = createExpectListenerCall({ userId: '123', timestamp: time });
 
@@ -103,7 +103,7 @@ describe('listener store', () => {
         expectListenerCall(listener3, 1);
     });
 
-    it('should remove listeners', () => {
+    it('should remove listeners', async () => {
         const listener1 = createEmptyFn();
         const listener2 = createEmptyFn();
         const listener3 = createEmptyFn();
@@ -114,20 +114,20 @@ describe('listener store', () => {
 
         const time = Date.now();
 
-        store.notify('user:login', { userId: '123', timestamp: time });
+        await store.notify('user:login', { userId: '123', timestamp: time });
         expectListenerCall(listener1, 1); // on
         expectListenerCall(listener2, 1); // on
         expectListenerCall(listener3, 1); // on
 
         store.off('user:login', listener1);
-        store.notify('user:login', { userId: '123', timestamp: time });
+        await store.notify('user:login', { userId: '123', timestamp: time });
 
         expectListenerCall(listener1, 1); // off
         expectListenerCall(listener2, 2); // on
         expectListenerCall(listener3, 2); // on
 
         store.off('user:login', listener2);
-        store.notify('user:login', { userId: '123', timestamp: time });
+        await store.notify('user:login', { userId: '123', timestamp: time });
 
         expectListenerCall(listener1, 1); // off
         expectListenerCall(listener2, 2); // off
@@ -135,14 +135,14 @@ describe('listener store', () => {
 
         store.off('user:login', listener3);
         for (let i = 0; i < 10; i++) {
-            store.notify('user:login', { userId: '123', timestamp: time });
+            await store.notify('user:login', { userId: '123', timestamp: time });
             expectListenerCall(listener1, 1); // off
             expectListenerCall(listener2, 2); // off
             expectListenerCall(listener3, 3); // off
         }
     });
 
-    it('should not throw exception when no listener/events is in store on remove fn', () => {
+    it('should not throw exception when no listener/events is in store on remove fn', async () => {
         const listener = createEmptyFn();
         const listener2 = createEmptyFn();
 
@@ -151,41 +151,41 @@ describe('listener store', () => {
         store.on('user:login', listener2);
         store.off('user:login', listener);
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expect(listener2).toHaveBeenCalledTimes(1);
     });
 
-    it('same listener should be called multiple times when listened to multiple events', () => {
+    it('same listener should be called multiple times when listened to multiple events', async () => {
         const listener = createEmptyFn();
 
         store.on('user:login', listener);
         store.on('user:logout', listener);
 
         const time = Date.now();
-        store.notify('user:login', { userId: '123', timestamp: time });
+        await store.notify('user:login', { userId: '123', timestamp: time });
         expect(listener).toHaveBeenCalledTimes(1);
         expect(listener).toHaveBeenCalledWith({ userId: '123', timestamp: time });
 
-        store.notify('user:logout', { userId: '123', reason: 'timeout' });
+        await store.notify('user:logout', { userId: '123', reason: 'timeout' });
         expect(listener).toHaveBeenCalledTimes(2);
         expect(listener).toHaveBeenCalledWith({ userId: '123', timestamp: time });
     });
 
-    it('should not remove listener with same reference from different events', () => {
+    it('should not remove listener with same reference from different events', async () => {
         const listener = createEmptyFn();
 
         store.on('user:login', listener);
         store.on('user:logout', listener);
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expect(listener).toHaveBeenCalledTimes(1);
 
         store.off('user:login', listener);
-        store.notify('user:logout', { userId: '123', reason: 'timeout' });
+        await store.notify('user:logout', { userId: '123', reason: 'timeout' });
         expect(listener).toHaveBeenCalledTimes(2);
     });
 
-    it('should clear all listeners', () => {
+    it('should clear all listeners', async () => {
         const listener1 = createEmptyFn();
         const listener2 = createEmptyFn();
         const listener3 = createEmptyFn();
@@ -194,7 +194,7 @@ describe('listener store', () => {
         store.on('user:login', listener2);
         store.on('user:login', listener3);
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expectListenerCall(listener1, 1);
         expectListenerCall(listener2, 1);
         expectListenerCall(listener3, 1);
@@ -202,14 +202,14 @@ describe('listener store', () => {
 
         store.clearAllListeners();
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expectListenerCall(listener1, 1);
         expectListenerCall(listener2, 1);
         expectListenerCall(listener3, 1);
         expectListenersToBe('user:login', 0);
     });
 
-    it('should clear listeners for a specific event', () => {
+    it('should clear listeners for a specific event', async () => {
         const listener1 = createEmptyFn();
         const listener2 = createEmptyFn();
         const listener3 = createEmptyFn();
@@ -218,7 +218,7 @@ describe('listener store', () => {
         store.on('user:logout', listener2);
         store.on('user:login', listener3);
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expectListenerCall(listener1, 1);
         expectListenerCall(listener2, 0);
         expectListenerCall(listener3, 1);
@@ -227,7 +227,7 @@ describe('listener store', () => {
 
         store.clearListeners('user:login');
 
-        store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
         expectListenerCall(listener1, 1);
         expectListenerCall(listener2, 0);
         expectListenerCall(listener3, 1);

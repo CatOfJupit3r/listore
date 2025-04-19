@@ -28,10 +28,10 @@ export class ListenerStore<Store extends EventRegistry = {}> {
      * @param event Event name
      * @param props Event payload
      */
-    public notify<E extends keyof Store>(event: E, props: Store[E]): void {
+    public async notify<E extends keyof Store>(event: E, props: Store[E]): Promise<void> {
         const listeners = this._listeners[event];
         if (listeners) {
-            listeners.forEach((listener) => listener(props));
+            await Promise.all(listeners.map((listener) => listener(props)));
         }
     }
 

@@ -59,7 +59,7 @@ describe('Strict Store', () => {
         expect(listener).toHaveBeenCalledWith(inputs);
     });
 
-    it('should trigger on error handler when key is invalid', () => {
+    it('should trigger on error handler when key is invalid', async () => {
         const inputs = { userId: '123', timestamp: Date.now() };
         const listener = createListener(inputs);
         const store = createStore();
@@ -86,13 +86,13 @@ describe('Strict Store', () => {
         // @ts-expect-error boo-hoo
         store.onKeyErrorValidationError = vi.fn(onKeyErrorFnNotification);
         // @ts-expect-error boo-hoo
-        store.notify('user:register', inputs);
+        await store.notify('user:register', inputs);
         expect(listener).toHaveBeenCalledTimes(0);
         expect(onKeyErrorFnAttachment).toHaveBeenCalledTimes(1);
         expect(onKeyErrorFnNotification).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error on notify with invalid key', () => {
+    it('should throw error on notify with invalid key', async () => {
         const store = createStore({
             notification: {
                 throws: true,
@@ -101,12 +101,13 @@ describe('Strict Store', () => {
         const inputs = { userId: '123', timestamp: Date.now() };
         const listener = createListener(inputs);
         attachToStoreInHardWay(store, 'account:login', listener);
+
         // @ts-expect-error boo-hoo
-        expect(() => store.notify('account:login', inputs)).toThrowError(StrictStoreKeyCheckFailError);
+        await expect(() => store.notify('account:login', inputs)).rejects.toThrowError(StrictStoreKeyCheckFailError);
         expect(listener).toHaveBeenCalledTimes(0);
     });
 
-    it('should throw custom error on notify with invalid key if specified', () => {
+    it('should throw custom error on notify with invalid key if specified', async () => {
         const error = new Error('Custom error');
         const store = createStore({
             notification: {
@@ -122,11 +123,11 @@ describe('Strict Store', () => {
         attachToStoreInHardWay(store, 'account:login', listener);
 
         // @ts-expect-error boo-hoo
-        expect(() => store.notify('account:login', inputs)).toThrow(error);
+        await expect(() => store.notify('account:login', inputs)).rejects.toThrow(error);
         expect(listener).toHaveBeenCalledTimes(0);
     });
 
-    it('should not throw error on notify with valid key', () => {
+    it('should not throw error on notify with valid key', async () => {
         const store = createStore({
             notification: {
                 throws: true,
@@ -140,7 +141,7 @@ describe('Strict Store', () => {
         expect(listener).toHaveBeenCalledTimes(1);
     });
 
-    it('should log error on notify with invalid key if specified', () => {
+    it('should log error on notify with invalid key if specified', async () => {
         console.warn = vi.fn();
         const store = createStore({
             notification: {
@@ -151,13 +152,13 @@ describe('Strict Store', () => {
         const listener = createListener({});
         attachToStoreInHardWay(store, 'account:login', listener);
         // @ts-expect-error boo-hoo
-        store.notify('account:login', {});
+        await store.notify('account:login', {});
         expect(listener).toHaveBeenCalledTimes(0);
         expect(console.warn).toHaveBeenCalledTimes(1);
         expect(console.warn).toHaveBeenCalledWith(failedToValidateEventMessage('account:login', 'notify'));
     });
 
-    it('should call custom logger on notify with invalid key if specified', () => {
+    it('should call custom logger on notify with invalid key if specified', async () => {
         const logger = vi.fn();
         const store = createStore({
             notification: {
@@ -173,7 +174,7 @@ describe('Strict Store', () => {
         attachToStoreInHardWay(store, 'account:login', listener);
 
         // @ts-expect-error boo-hoo
-        store.notify('account:login', {});
+        await store.notify('account:login', {});
         expect(listener).toHaveBeenCalledTimes(0);
         expect(logger).toHaveBeenCalledTimes(1);
     });
@@ -262,7 +263,7 @@ describe('Strict Store', () => {
         expect(logger).toHaveBeenCalledTimes(1);
     });
 
-    it('should not call console.warn if logging is turn off on attachment with invalid key if specified', () => {
+    it('should not call console.warn if logging is turn off on attachment with invalid key if specified', async () => {
         console.warn = vi.fn();
         const store = createStore({
             attachment: {
@@ -277,15 +278,14 @@ describe('Strict Store', () => {
             message: buildRegExpForErrorValidation('account:login', 'on'),
         });
         // @ts-expect-error boo-hoo
-        expect(() => store.notify('account:login', {})).toThrowErrorWithErrorMessage({
-            error: StrictStoreKeyCheckFailError,
-            message: buildRegExpForErrorValidation('account:login', 'notify'),
-        });
+        expect(() => store.notify('account:login', {})).rejects.toThrow(
+            buildRegExpForErrorValidation('account:login', 'notify')
+        );
         expect(listener).toHaveBeenCalledTimes(0);
         expect(console.warn).toHaveBeenCalledTimes(0);
     });
 
-    it('should both log and throw error if attachment or notification receives invalid keys', () => {
+    it('should both log and throw error if attachment or notification receives invalid keys', async () => {
         console.warn = vi.fn();
         const store = createStore({
             attachment: {
@@ -305,7 +305,7 @@ describe('Strict Store', () => {
         expect(console.warn).toHaveBeenCalledTimes(1);
 
         // @ts-expect-error boo-hoo
-        expect(() => store.notify('account:login', {})).toThrowError(StrictStoreKeyCheckFailError);
+        expect(() => store.notify('account:login', {})).rejects.toThrowError(StrictStoreKeyCheckFailError);
         expect(listener).toHaveBeenCalledTimes(0);
         expect(console.warn).toHaveBeenCalledTimes(2);
     });
