@@ -234,4 +234,28 @@ describe('listener store', () => {
         expectListenersToBe('user:login', 0);
         expectListenersToBe('user:logout', 1); // still hanging in there!
     });
+
+    it('should handle async listeners', async () => {
+        let hasBeenCalled = false;
+        const asyncListener = vi.fn(async () => {
+            hasBeenCalled = true;
+        });
+
+        store.on('user:login', asyncListener);
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        expect(asyncListener).toHaveBeenCalledTimes(1);
+        expect(hasBeenCalled).toBeTruthy();
+    });
+
+    it('should properly handle async and sync listeners on same event', async () => {
+        const asyncListener = vi.fn(async () => {});
+        const syncListener = vi.fn(() => {});
+
+        store.on('user:login', asyncListener);
+        store.on('user:login', syncListener);
+
+        await store.notify('user:login', { userId: '123', timestamp: Date.now() });
+        expect(asyncListener).toHaveBeenCalledTimes(1);
+        expect(syncListener).toHaveBeenCalledTimes(1);
+    });
 });
