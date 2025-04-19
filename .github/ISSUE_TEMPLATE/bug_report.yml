@@ -44,24 +44,6 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    id: platform
-    attributes:
-      label: Platform
-      options:
-        - Windows
-        - macOS
-        - Linux
-    validations:
-      required: true
-
-  - type: input
-    id: os-version
-    attributes:
-      label: OS Version
-    validations:
-      required: true
-
   - type: input
     id: node-version
     attributes:
