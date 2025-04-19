@@ -1,6 +1,6 @@
 export type { EventRegistry, ListenerFn, ListenersMap } from './types';
 
 export { ListenerStore } from './listener-store';
-export { StoreWithKeyValidation } from './store-with-key-validation';
+export { StrictStore } from './strict-store';
 
-export { StrictKeyCheckFailError } from './errors';
+export { StrictStoreKeyCheckFailError } from './errors';

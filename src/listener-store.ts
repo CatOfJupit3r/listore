@@ -9,7 +9,7 @@ export class ListenerStore<Store extends EventRegistry = {}> {
      * Private property to store the listeners
      * @private
      */
-    private _listeners: ListenersMap<Store> = {};
+    protected _listeners: ListenersMap<Store> = {};
 
     /**
      * Register an event listener for a specific event
