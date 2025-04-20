@@ -14,7 +14,7 @@ on:
       - 'package-lock.json'
       - 'src/**'
       - 'README.md'
-      - '.github/workflows'
+      - '.github/workflows/release.yml'
       - '!tests/**/*'
   
 jobs:
