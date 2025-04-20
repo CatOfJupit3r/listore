@@ -14,6 +14,9 @@ export type ListenerFn<T> = SyncListenerFn<T> | AsyncListenerFn<T>;
 export type ListenersMap<Store extends EventRegistry> = {
     [E in keyof Store]?: Array<ListenerFn<Store[E]>>;
 };
+/**
+ * Method with key validation support
+ */
 export type MethodWithKeyValidationSupport = 'on' | 'notify';
 
 /**
@@ -21,16 +24,19 @@ export type MethodWithKeyValidationSupport = 'on' | 'notify';
  * @property throws - if true, throws StrictStoreKeyCheckFailError on key validation error, if false, does nothing. If a function is provided, it will call it and throw the result.
  * @property logger - used to log the event and method on key validation error
  */
-interface Rule {
+export interface StrictRule {
     throws?: boolean | ((event: string, method: MethodWithKeyValidationSupport) => Error);
     logger?: boolean | ((event: string, method: MethodWithKeyValidationSupport) => void);
 }
 
-export interface StrictStoreRules {
+/**
+ * Strict store rules
+ */
+export interface StrictStoreRuleSet {
     attachment?: {
-        key?: Rule;
+        key?: StrictRule;
     };
     notification?: {
-        key?: Rule;
+        key?: StrictRule;
     };
 }

@@ -1,6 +1,13 @@
-export type { EventRegistry, ListenerFn, ListenersMap } from './types';
+export type {
+    EventRegistry,
+    ListenerFn,
+    ListenersMap,
+    MethodWithKeyValidationSupport,
+    StrictRule,
+    StrictStoreRuleSet,
+} from './types';
 
 export { ListenerStore } from './listener-store';
-export { StrictStore } from './strict-store';
+export { DEFAULT_VALIDATION_RULES, StrictStore } from './strict-store';
 
-export { StrictStoreKeyCheckFailError } from './errors';
+export { StrictStoreKeyCheckFailError, failedToValidateEventMessage } from './errors';

@@ -1,8 +1,12 @@
 import { failedToValidateEventMessage, StrictStoreKeyCheckFailError } from './errors';
 import { ListenerStore } from './listener-store';
-import type { EventRegistry, ListenerFn, MethodWithKeyValidationSupport, StrictStoreRules } from './types';
+import type { EventRegistry, ListenerFn, MethodWithKeyValidationSupport, StrictStoreRuleSet } from './types';
 
-const DEFAULT_VALIDATION_RULES: StrictStoreRules = {
+/**
+ * Generator function for creating default validation rules
+ * @constructor
+ */
+export const DEFAULT_VALIDATION_RULES: () => StrictStoreRuleSet = () => ({
     attachment: {
         key: {
             throws: true,
@@ -15,7 +19,7 @@ const DEFAULT_VALIDATION_RULES: StrictStoreRules = {
             logger: false,
         },
     },
-};
+});
 
 /**
  * Customizable type-safe and strict event emitter with key validation for all your needs!
@@ -31,23 +35,24 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
     /**
      * Rules for the store, allowing you to customize the behavior of the store
      */
-    protected _rules: StrictStoreRules;
+    protected _rules: StrictStoreRuleSet;
 
-    constructor(keys: readonly T[], rules?: StrictStoreRules) {
+    constructor(keys: readonly T[], rules?: StrictStoreRuleSet) {
         super();
         this._keys = keys;
+        const defaults = DEFAULT_VALIDATION_RULES();
         this._rules = {
             attachment: {
-                ...(DEFAULT_VALIDATION_RULES.attachment ?? {}),
+                ...(defaults.attachment ?? {}),
                 key: {
-                    ...(DEFAULT_VALIDATION_RULES.attachment?.key ?? {}),
+                    ...(defaults.attachment?.key ?? {}),
                     ...(rules?.attachment?.key ?? {}),
                 },
             },
             notification: {
-                ...DEFAULT_VALIDATION_RULES.notification,
+                ...defaults.notification,
                 key: {
-                    ...(DEFAULT_VALIDATION_RULES.notification?.key ?? {}),
+                    ...(defaults.notification?.key ?? {}),
                     ...(rules?.notification?.key ?? {}),
                 },
             },

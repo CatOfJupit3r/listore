@@ -1,34 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any, @typescript-eslint/triple-slash-reference */
 /// <reference path="../.bin/vitest/setup/index.d.ts" />
 import { describe, expect, it, Mock, vi } from 'vitest';
-import { StrictStore } from '../src';
-import { failedToValidateEventMessage, StrictStoreKeyCheckFailError } from '../src/errors';
-import { StrictStoreRules } from '../src/types';
+import { failedToValidateEventMessage, StrictStore, StrictStoreKeyCheckFailError, StrictStoreRuleSet } from '../src';
 
 describe('Strict Store', () => {
     const keys = ['user:login', 'user:logout'] as const;
-    const createStore = (rules?: StrictStoreRules) =>
+    const createStore = (rules: StrictStoreRuleSet) =>
         new StrictStore<
             {
                 'user:login': { userId: string; timestamp: number };
                 'user:logout': { userId: string; reason: string };
             },
             (typeof keys)[number]
-        >(
-            keys,
-            rules ?? {
-                attachment: {
-                    key: {
-                        throws: false,
-                    },
-                },
-                notification: {
-                    key: {
-                        throws: false,
-                    },
-                },
-            }
-        );
+        >(keys, rules);
 
     const createListener = (inputs?: any) => {
         return vi.fn(() => (..._: any[]) => {
@@ -55,7 +39,18 @@ describe('Strict Store', () => {
     it('should trigger events with valid keys', () => {
         const inputs = { userId: '123', timestamp: Date.now() };
         const listener = createListener(inputs);
-        const store = createStore();
+        const store = createStore({
+            attachment: {
+                key: {
+                    throws: false,
+                },
+            },
+            notification: {
+                key: {
+                    throws: false,
+                },
+            },
+        });
         store.on('user:login', listener);
         store.notify('user:login', inputs);
 
@@ -66,7 +61,18 @@ describe('Strict Store', () => {
     it('should trigger on error handler when key is invalid', async () => {
         const inputs = { userId: '123', timestamp: Date.now() };
         const listener = createListener(inputs);
-        const store = createStore();
+        const store = createStore({
+            attachment: {
+                key: {
+                    throws: false,
+                },
+            },
+            notification: {
+                key: {
+                    throws: false,
+                },
+            },
+        });
         store.on('user:login', listener);
         const onKeyErrorFn: (method: string) => Mock<(typeof store)['onKeyErrorValidationError']> = (
             methodToCall: string
