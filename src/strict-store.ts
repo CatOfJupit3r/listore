@@ -48,7 +48,7 @@ export class StrictStore<Store extends EventRegistry, T extends string> extends 
         if (Array.isArray(keys)) {
             this._keys = keys;
         } else {
-            this._keys = Object.keys(keys) as T[];
+            this._keys = Object.values(keys) as T[];
         }
         const defaults = DEFAULT_VALIDATION_RULES();
         this._rules = {
