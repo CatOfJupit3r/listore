@@ -37,9 +37,13 @@ export class StrictStore<Store extends EventRegistry<T>, T extends string> exten
      */
     protected _rules: StrictStoreRuleSet;
 
-    constructor(keys: readonly T[], rules?: StrictStoreRuleSet) {
+    constructor(keys: readonly T[] | Record<T, T>, rules?: StrictStoreRuleSet) {
         super();
-        this._keys = keys;
+        if (Array.isArray(keys)) {
+            this._keys = keys;
+        } else {
+            this._keys = Object.keys(keys) as T[];
+        }
         const defaults = DEFAULT_VALIDATION_RULES();
         this._rules = {
             attachment: {
