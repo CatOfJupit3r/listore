@@ -36,6 +36,23 @@ describe('Strict Store', () => {
         return new RegExp(`^(?=.*${event})(?=.*${method})(?=.*unknown).*$`, 'i');
     };
 
+    it('should handle keys from array and object', () => {
+        const keys = ['user:login', 'user:logout'] as const;
+        const storeFromArray = new StrictStore(keys);
+        // @ts-expect-error we don't care about if it is private or not
+        expect(storeFromArray._keys).toEqual(keys);
+
+        const keysFromObject = {
+            'user:login': 'USER:LOGIN',
+            'user:logout': 'USER:LOGOUT',
+        } as const;
+        const storeFromObject = new StrictStore(keysFromObject);
+        // @ts-expect-error we don't care about if it is private or not
+        expect(storeFromObject._keys).toEqual(['USER:LOGIN', 'USER:LOGOUT']); // it should take the values
+        // @ts-expect-error we don't care about if it is private or not
+        expect(storeFromObject._keys).not.toEqual(['user:login', 'user:logout']); // and not the keys
+    });
+
     it('should trigger events with valid keys', () => {
         const inputs = { userId: '123', timestamp: Date.now() };
         const listener = createListener(inputs);
