@@ -40,3 +40,5 @@ export interface StrictStoreRuleSet {
         key?: StrictRule;
     };
 }
+
+export type ListenerFnOrNever<StoreT> = ListenerFn<StoreT> extends Record<string, unknown> ? never : ListenerFn<StoreT>;
