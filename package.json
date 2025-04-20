@@ -3,17 +3,15 @@
     "version": "0.0.0",
     "description": "TypeScript-first library for creating modular event emitters/listener pattern stores",
     "main": "./dist/index.js",
-    "engines" : {
-        "node" : ">=20.0.0"
+    "engines": {
+        "node": ">=20.0.0"
     },
     "scripts": {
         "build": "npx tsc --project tsconfig.build.json",
         "prepare": "husky",
         "pretty": "prettier --plugin=prettier-plugin-organize-imports --write .",
-
         "test": "vitest --config .bin/vitest/vitest.config.ts",
         "clean": "rm -rf ./dist/",
-
         "lint": "eslint . --fix",
         "ts": "tsc --noEmit"
     },
@@ -33,35 +31,88 @@
     "bugs": {
         "url": "https://github.com/CatOfJupit3r/lystore/issues"
     },
-    "homepage" : "https://github.com/CatOfJupit3r/lystore#readme",
-    "repository" : {
-        "type" : "git",
-        "url" : "https://github.com/CatOfJupit3r/lystore.git"
+    "homepage": "https://github.com/CatOfJupit3r/lystore#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/CatOfJupit3r/lystore.git"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.2.0",
         "@eslint/js": "^9.17.0",
+        "@ryansonshine/commitizen": "^4.2.8",
+        "@ryansonshine/cz-conventional-changelog": "^3.3.4",
         "@tsconfig/recommended": "^1.0.8",
         "@types/node": "^20.17.7",
         "@typescript-eslint/eslint-plugin": "^8.15.0",
         "@typescript-eslint/parser": "^8.19.0",
         "@vitest/coverage-v8": "^3.0.5",
+        "conventional-changelog-conventionalcommits": "^8.0.0",
         "eslint": "^9.17.0",
         "globals": "^15.14.0",
         "husky": "^9.1.7",
         "lint-staged": "^15.2.10",
         "prettier": "3.2.5",
         "prettier-plugin-organize-imports": "^3.2.4",
+        "semantic-release": "^24.2.3",
         "typescript": "^5.7.2",
         "typescript-eslint": "^8.19.0",
         "vitest": "^3.0.5"
     },
-    "dependencies": {},
     "lint-staged": {
         "*.{ts,js}": [
             "eslint --fix",
             "prettier --write",
             "bash -c 'npm run ts'"
+        ]
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/@ryansonshine/cz-conventional-changelog"
+        }
+    },
+    "release": {
+        "branches": [
+            "main"
+        ],
+        "plugins": [
+            [
+                "@semantic-release/commit-analyzer",
+                {
+                    "preset": "conventionalcommits",
+                    "releaseRules": [
+                        {
+                            "type": "build",
+                            "scope": "deps",
+                            "release": "patch"
+                        }
+                    ]
+                }
+            ],
+            [
+                "@semantic-release/release-notes-generator",
+                {
+                    "preset": "conventionalcommits",
+                    "presetConfig": {
+                        "types": [
+                            {
+                                "type": "feat",
+                                "section": "Features"
+                            },
+                            {
+                                "type": "fix",
+                                "section": "Bug Fixes"
+                            },
+                            {
+                                "type": "build",
+                                "section": "Dependencies and Other Build Updates",
+                                "hidden": false
+                            }
+                        ]
+                    }
+                }
+            ],
+            "@semantic-release/npm",
+            "@semantic-release/github"
         ]
     }
 }
