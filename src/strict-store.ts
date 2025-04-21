@@ -63,13 +63,19 @@ export class StrictStore<T extends string, Store extends StrictRegistry<T>> exte
         };
     }
 
-    public on<K extends keyof Store>(event: K, listener: ListenerFn<Store[K]>): void {
+    public on<K extends keyof Store>(
+        event: K extends T ? K : never,
+        listener: K extends T ? ListenerFn<Store[K]> : never
+    ): void {
         const check = this.checkEvent(event, 'on');
         if (!check) return;
-        super.on(event, listener); // as this point, event is guaranteed to be T
+        super.on(event, listener as ListenerFn<Store[K]>); // as this point, event is guaranteed to be T
     }
 
-    public async notify<K extends keyof Store>(event: K, props: Store[K]): Promise<void> {
+    public async notify<K extends keyof Store>(
+        event: K extends T ? K : never,
+        props: K extends T ? Store[K] : never
+    ): Promise<void> {
         const check = this.checkEvent(event, 'notify');
         if (!check) return;
         return super.notify(event, props as Store[K]);
