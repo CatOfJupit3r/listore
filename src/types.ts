@@ -2,6 +2,9 @@
  * Describes the shape of the event registry
  */
 export type EventRegistry<K extends string = string> = Record<K, Record<string, unknown>>;
+/**
+ * Describes the shape of the strict registry
+ */
 export type StrictRegistry<A extends string> = {
     [K in A]: Record<string, unknown>;
 };
