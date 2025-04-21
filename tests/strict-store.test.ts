@@ -7,11 +7,11 @@ describe('Strict Store', () => {
     const keys = ['user:login', 'user:logout'] as const;
     const createStore = (rules: StrictStoreRuleSet) =>
         new StrictStore<
+            Readonly<'user:login' | 'user:logout'>,
             {
                 'user:login': { userId: string; timestamp: number };
                 'user:logout': { userId: string; reason: string };
-            },
-            (typeof keys)[number]
+            }
         >(keys, rules);
 
     const createListener = (inputs?: any) => {

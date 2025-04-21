@@ -2,6 +2,10 @@
  * Describes the shape of the event registry
  */
 export type EventRegistry<K extends string = string> = Record<K, Record<string, unknown>>;
+export type StrictRegistry<A extends string> = {
+    [K in A]: Record<string, unknown>;
+};
+
 type SyncListenerFn<T> = (props: T) => void;
 type AsyncListenerFn<T> = (props: T) => Promise<void>;
 /**

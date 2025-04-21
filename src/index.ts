@@ -3,6 +3,7 @@ export type {
     ListenerFn,
     ListenersMap,
     MethodWithKeyValidationSupport,
+    StrictRegistry,
     StrictRule,
     StrictStoreRuleSet,
 } from './types';
