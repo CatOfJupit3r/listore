@@ -19,7 +19,6 @@
         "dist"
     ],
     "esModuleInterop": true,
-    "type": "module",
     "keywords": [
         "typescript",
         "event-emitter",
