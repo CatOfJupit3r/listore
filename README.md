@@ -66,7 +66,7 @@ your registry
 </h6>
 
 ```typescript
-import store from 'user.store';
+import store from './user.store';
 
 store.on('user:login', ({ userId, date }) => {
     console.log(`userId AND date are fully typed!`);
