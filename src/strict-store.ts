@@ -1,12 +1,6 @@
 import { failedToValidateEventMessage, StrictStoreKeyCheckFailError } from './errors';
 import { ListenerStore } from './listener-store';
-import {
-    EventRegistry,
-    ListenerFn,
-    ListenerFnOrNever,
-    MethodWithKeyValidationSupport,
-    StrictStoreRuleSet,
-} from './types';
+import { EventRegistry, ListenerFn, MethodWithKeyValidationSupport, StrictStoreRuleSet } from './types';
 
 /**
  * Generator function for creating default validation rules
@@ -69,15 +63,18 @@ export class StrictStore<Store extends EventRegistry, T extends string> extends 
         };
     }
 
-    public on<K extends keyof Store>(event: K, listener: ListenerFnOrNever<Store[K]>): void {
+    public on<K extends keyof Store>(
+        event: K extends T ? K : never,
+        listener: K extends T ? ListenerFn<Store[K]> : never
+    ): void {
         const check = this.checkEvent(event, 'on');
         if (!check) return;
         super.on(event, listener as ListenerFn<Store[K]>); // as this point, event is guaranteed to be T
     }
 
     public async notify<K extends keyof Store>(
-        event: K,
-        props: K extends keyof Store ? Store[K] : never
+        event: K extends T ? K : never,
+        props: K extends T ? Store[K] : never
     ): Promise<void> {
         const check = this.checkEvent(event, 'notify');
         if (!check) return;
