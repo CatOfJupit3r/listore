@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="75" height="75" alt="Lystore Logo" src="docs/lystore-white-with-border.png" />
+    <img width="75" height="75" alt="Lystore Logo" src="docs/lystore.png" />
 </p>
 <h1 align="center">Lystore - listeners, which actually listen!</h1>
 
